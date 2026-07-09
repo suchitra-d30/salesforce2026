@@ -1,0 +1,10 @@
+trigger AccountAddressTrigger on Account (before insert, before update) {
+    // Loop through the accounts being inserted or updated
+    for (Account a : Trigger.new) {
+        // Check if the checkbox is checked and the billing postal code is not blank
+        if (a.Match_Billing_Address__c == true && a.BillingPostalCode != null) {
+            // Set the shipping postal code to match the billing postal code
+            a.ShippingPostalCode = a.BillingPostalCode;
+        }
+    }
+}
