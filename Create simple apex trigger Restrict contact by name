@@ -1,0 +1,40 @@
+trigger RestrictContactByName on Contact (before insert, before update) {
+    // Check contacts prior to insert or update for invalid data
+    for (Contact c : Trigger.New) {
+        if (c.LastName == 'INVALIDNAME') { // invalidname is invalid
+            c.AddError('The Last Name "'+c.LastName+'" is not allowed for DML');
+        }
+    }
+}
+
+//test code
+@isTest
+public class TestRestrictContactByName {
+
+    @isTest
+    static void testInvalidLastName() {
+        // Test scenario: Trying to insert a contact with the forbidden last name
+        Contact con = new Contact(LastName = 'INVALIDNAME');
+        
+        Test.startTest();
+        Database.SaveResult result = Database.insert(con, false); // false allows the test to continue after a failure
+        Test.stopTest();
+        
+        // Verify the insert was blocked and returned the proper error message
+        System.assert(!result.isSuccess());
+        System.assertEquals('The Last Name "INVALIDNAME" is not allowed for DML', result.getErrors()[0].getMessage());
+    }
+
+    @isTest
+    static void testValidLastName() {
+        // Test scenario: Inserting a contact with a normal last name
+        Contact con = new Contact(LastName = 'Smith');
+        
+        Test.startTest();
+        Database.SaveResult result = Database.insert(con, false);
+        Test.stopTest();
+        
+        // Verify the insert was successful
+        System.assert(result.isSuccess());
+    }
+}
