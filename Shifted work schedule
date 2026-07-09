@@ -1,0 +1,75 @@
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
+public class PoleScheduleYear {
+
+    public static void main(String[] args) {
+
+        int year = 2026;
+
+        LocalDate date = LocalDate.of(year, 1, 1);
+        LocalDate end = LocalDate.of(year, 12, 31);
+
+        // Table Header
+        System.out.println("-----------------------------------------------------------------------------------------------");
+        System.out.printf("%-12s %-12s %-30s %-25s%n",
+                "Date", "Day", "Pole Status", "Remarks");
+        System.out.println("-----------------------------------------------------------------------------------------------");
+
+        while (!date.isAfter(end)) {
+
+            DayOfWeek day = date.getDayOfWeek();
+
+            String poleStatus = "";
+            String remarks = "";
+
+            switch (day) {
+
+                case MONDAY:
+                    poleStatus = "Even Poles (2,4,6,8)";
+                    remarks = "Shifted from Sunday";
+                    break;
+
+                case TUESDAY:
+                    poleStatus = "Odd Poles (1,3,5,7)";
+                    remarks = "Shifted from Monday";
+                    break;
+
+                case WEDNESDAY:
+                    poleStatus = "No Poles";
+                    remarks = "HOLIDAY";
+                    break;
+
+                case THURSDAY:
+                    poleStatus = "Odd Poles (1,3,5,7)";
+                    remarks = "Shifted from Wednesday";
+                    break;
+
+                case FRIDAY:
+                    poleStatus = "Even Poles (2,4,6,8)";
+                    remarks = "Shifted from Thursday";
+                    break;
+
+                case SATURDAY:
+                    poleStatus = "Odd Poles (1,3,5,7)";
+                    remarks = "Shifted from Friday";
+                    break;
+
+                case SUNDAY:
+                    poleStatus = "Even Poles (2,4,6,8)";
+                    remarks = "Shifted from Saturday";
+                    break;
+            }
+
+            System.out.printf("%-12s %-12s %-30s %-25s%n",
+                    date,
+                    day,
+                    poleStatus,
+                    remarks);
+
+            date = date.plusDays(1);
+        }
+
+        System.out.println("-----------------------------------------------------------------------------------------------");
+    }
+}
