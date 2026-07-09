@@ -1,0 +1,21 @@
+public class AccountHandler {
+    
+    public static Account insertNewAccount(String accountName) {
+        // Use a try-catch block to handle potential DML exceptions (like an empty string)
+        try {
+            // Create a new Account instance and set its name
+            Account acct = new Account(Name = accountName);
+            
+            // Insert the account into the database
+            insert acct;
+            
+            // Return the successfully inserted account record
+            return acct;
+            
+        } catch (DMLException e) {
+            // If a DML exception occurs (e.g., if accountName is empty), catch it and return null
+            System.debug('A DML exception occurred: ' + e.getMessage());
+            return null;
+        }
+    }
+}
