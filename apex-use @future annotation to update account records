@@ -1,0 +1,49 @@
+public class AccountProcessor {
+    
+    @future
+    public static void countContacts(List<Id> accountIds) {
+        List<Account> accountsToUpdate = new List<Account>();
+        
+        // Query accounts along with their child contacts matching the incoming IDs
+        List<Account> accts = [SELECT Id, (SELECT Id FROM Contacts) FROM Account WHERE Id IN :accountIds];
+        
+        for (Account acc : accts) {
+            // Count the size of the related contacts list
+            acc.Number_Of_Contacts__c = acc.Contacts.size();
+            accountsToUpdate.add(acc);
+        }
+        
+        // Update the accounts in bulk
+        if (accountsToUpdate.size() > 0) {
+            update accountsToUpdate;
+        }
+    }
+}
+
+//test code
+@isTest
+public class AccountProcessorTest {
+
+    @isTest
+    static void testCountContacts() {
+        // Set up test data: Create an Account
+        Account newAccount = new Account(Name = 'Test Account');
+        insert newAccount;
+        
+        // Create a related Contact for that Account
+        Contact newContact = new Contact(FirstName = 'John', LastName = 'Doe', AccountId = newAccount.Id);
+        insert newContact;
+        
+        // Collect the ID into a list
+        List<Id> accountIds = new List<Id>{ newAccount.Id };
+        
+        // Execute the asynchronous future method safely within start/stop test block
+        Test.startTest();
+        AccountProcessor.countContacts(accountIds);
+        Test.stopTest(); // Forces asynchronous processes to finish right here
+        
+        // Verify that the field was updated correctly
+        Account updatedAcc = [SELECT Number_Of_Contacts__c FROM Account WHERE Id = :newAccount.Id];
+        System.assertEquals(1, updatedAcc.Number_Of_Contacts__c, 'The contact count should be 1');
+    }
+}
