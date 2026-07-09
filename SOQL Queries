@@ -1,0 +1,28 @@
+public class ContactSearch {
+
+    public static List<Contact> searchForContacts(String lastName, String postalCode) {
+        // Query the database for ID and Name where both conditions match
+        List<Contact> matchingContacts = [
+            SELECT Id, Name 
+            FROM Contact 
+            WHERE LastName = :lastName AND MailingPostalCode = :postalCode
+        ];
+        
+        // Return the list of matching contact records
+        return matchingContacts;
+    }
+}
+
+public class ContactAndLeadSearch {
+
+    public static List<List<sObject>> searchContactsAndLeads(String searchWord) {
+        // SOSL queries use FIND to search across fields and return a list of lists
+        List<List<sObject>> searchList = [
+            FIND :searchWord 
+            IN ALL FIELDS 
+            RETURNING Contact(FirstName, LastName), Lead(FirstName, LastName)
+        ];
+        
+        return searchList;
+    }
+}
