@@ -1,0 +1,20 @@
+//APEX CODE 1
+
+System.debug(LoggingLevel.INFO, 'My Info Debug Message');
+System.debug(LoggingLevel.FINE, 'My Fine Debug Message');
+List<Account> accts = [SELECT Id, Name FROM Account];
+for(Account a : accts) {
+    System.debug('Account Name: ' + a.name);
+    System.debug('Account Id: ' + a.Id);
+}
+
+
+
+//APEX CODE 2
+
+Account acct = new Account(
+    Name='Test Account 3',
+    Phone='(415)555-8989',
+    NumberOfEmployees=30,
+    BillingCity='San Francisco');
+insert acct;
